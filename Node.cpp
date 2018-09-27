@@ -15,7 +15,7 @@ Node::~Node()
 
 void Node::sortIndex(int featureId)
 {
-	float**data=_samples->_dataset;
+	const vector < vector <float> > &data=_samples->_dataset;
 	int*sampleId=_samples->getSampleIndex();
 	Pair*pairs=new Pair[_samples->getSelectedSampleNum()];
 	for(int i=0;i<_samples->getSelectedSampleNum();++i)
@@ -29,14 +29,14 @@ void Node::sortIndex(int featureId)
 	delete[] pairs;
 }
 
-int compare_pair( const void* a, const void* b ) 
+int compare_pair( const void* a, const void* b )
 {
    Pair* arg1 = (Pair*) a;
    Pair* arg2 = (Pair*) b;
    if( arg1->feature < arg2->feature ) return -1;
    else if( arg1->feature == arg2->feature ) return 0;
    else return 1;
-}     
+}
 /***************************************************************/
 //ClasNode
 ClasNode::ClasNode()
@@ -81,8 +81,8 @@ void ClasNode::calculateInfoGain(Node**nodeArray,int id,float minInfoGain)
 	int i=0,j=0,k=0;
 	int*sampleId=_samples->getSampleIndex();
 	int*featureId=_samples->getFeatureIndex();
-	float**data=_samples->_dataset;
-	float*labels=_samples->_labels;
+	const vector < vector <float> > &data=_samples->_dataset;
+	const vector <float> &labels=_samples->_labels;
 	int featureNum=_samples->getSelectedFeatureNum();
 	int sampleNum=_samples->getSelectedSampleNum();
 	int classNum=_samples->getClassNum();
@@ -229,7 +229,7 @@ void ClasNode::createLeaf()
 	_isLeaf=true;
 }
 
-int ClasNode::predict(float*data,int id)
+int ClasNode::predict(const vector <float> &data,int id)
 {
 	if(data[_featureIndex]<_threshold)
 	{return id*2+1;}
@@ -277,8 +277,8 @@ void RegrNode::calculateInfoGain(Node**nodeArray,int id,float minInfoGain)
 	int i=0,j=0,k=0;
 	int*sampleId=_samples->getSampleIndex();
 	int*featureId=_samples->getFeatureIndex();
-	float**data=_samples->_dataset;
-	float*labels=_samples->_labels;
+	const vector < vector <float> > &data=_samples->_dataset;
+	const vector <float> &labels=_samples->_labels;
 	int featureNum=_samples->getSelectedFeatureNum();
 	int sampleNum=_samples->getSelectedSampleNum();
 	//the final params need to store
@@ -376,7 +376,7 @@ void RegrNode::calculateInfoGain(Node**nodeArray,int id,float minInfoGain)
 	{createLeaf();}
 	else
 	{
-		//sort the samples so that all the samples 
+		//sort the samples so that all the samples
 		//less than the threshold will be on the left
 		//and others will be on the right
 		sortIndex(maxFeatureId);
@@ -402,7 +402,7 @@ void RegrNode::createLeaf()
 	_isLeaf=true;
 }
 
-int RegrNode::predict(float*data,int id)
+int RegrNode::predict(const vector <float> &data,int id)
 {
 	if(data[_featureIndex]<_threshold)
 	{return id*2+1;}

@@ -12,10 +12,13 @@
 #ifndef CARTREE_H
 #define CARTREE_H
 
-#include<stdio.h>
-#include<math.h>
-#include"Sample.h"
-#include"Node.h"
+#include <stdio.h>
+#include <math.h>
+#include <vector>
+#include "Sample.h"
+#include "Node.h"
+
+using namespace std;
 
 class Tree
 {
@@ -23,7 +26,7 @@ public:
 	/*************************************************************
 	*MaxDepth:the max Depth of one single tree
 	*trainFeatureNumPerNode:the feature number used in every node while training
-	*minLeafSample:terminate criterion,the min samples in a leaf   
+	*minLeafSample:terminate criterion,the min samples in a leaf
 	*minInfoGain:terminate criterion,the min information gain in
 	*a node if it can be splitted
 	*isRegression:if the problem is regression(true) or classification(false)
@@ -31,7 +34,7 @@ public:
 	Tree(int MaxDepth,int trainFeatureNumPerNode,int minLeafSample,float minInfoGain,bool isRegression);
 	virtual ~Tree();
 	virtual void train(Sample*Sample)=0;
-	Result predict(float*data);
+	Result predict(const vector <float> &data);
 	inline Node**getTreeArray(){return _cartreeArray;};
 	virtual void createNode(int id,int featureIndex,float threshold)=0;
 protected:

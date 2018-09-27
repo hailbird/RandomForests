@@ -11,7 +11,7 @@ RandomForest::RandomForest(int treeNum,int maxDepth,int minLeafSample,float minI
 	printf("max depth of a single tree:%d\n",_maxDepth);
 	printf("the minimum samples in a leaf:%d\n",_minLeafSample);
 	printf("the minimum information gain:%f\n",_minInfoGain);
-    
+
 	_forest=new Tree*[_treeNum];
 	for(int i=0;i<_treeNum;++i)
 	{_forest[i]=NULL;}
@@ -45,16 +45,28 @@ RandomForest::~RandomForest()
 	}
 }
 
-void RandomForest::train(float**trainset,float*labels,int SampleNum,int featureNum,
-			   int classNum,bool isRegression)
+void
+RandomForest::train(
+		const vector < vector <float> > &trainset,
+		const vector <float> &labels,
+		int classNum,
+		bool isRegression)
 {
-	int trainFeatureNumPerNode=static_cast<int>(sqrt(static_cast<float>(featureNum)));
-	train(trainset,labels,SampleNum,featureNum,classNum,isRegression,trainFeatureNumPerNode);
+	int featureNum = trainset[0].size();
+	int trainFeatureNumPerNode = static_cast<int>(sqrt(static_cast<float>(featureNum)));
+	train(trainset, labels, classNum, trainFeatureNumPerNode, isRegression);
 }
 
-void RandomForest::train(float**trainset,float*labels,int SampleNum,int featureNum,
-			   int classNum,bool isRegression,int trainFeatureNumPerNode)
+void
+RandomForest::train(
+		const vector < vector <float> > &trainset,
+		const vector <float> &labels,
+		int classNum,
+		int trainFeatureNumPerNode,
+		bool isRegression)
 {
+	int SampleNum = trainset.size();
+	int featureNum = trainset[0].size();
 	if(_treeNum<1)
 	{
 		printf("total tree number must bigger than 0!\n");
@@ -87,9 +99,7 @@ void RandomForest::train(float**trainset,float*labels,int SampleNum,int featureN
 			_forest[i]=new RegrTree(_maxDepth,_trainFeatureNumPerNode,
 				_minLeafSample,_minInfoGain,_isRegression);
 		}
-	}
-	else
-	{
+	} else {
 		for(int i=0;i<_treeNum;++i)
 		{
 			_forest[i]=new ClasTree(_maxDepth,_trainFeatureNumPerNode,
@@ -97,7 +107,7 @@ void RandomForest::train(float**trainset,float*labels,int SampleNum,int featureN
 		}
 	}
 	//this object hold the whole trainset&labels
-	_trainSample=new Sample(trainset,labels,_classNum,_trainSampleNum,_featureNum);
+	_trainSample = new Sample(trainset, labels, _classNum, _trainSampleNum, _featureNum);
 	srand(static_cast<unsigned int>(time(NULL)));
 	int*_sampleIndex=new int[_trainSampleNum];
 	//start to train every tree in the forest
@@ -114,7 +124,10 @@ void RandomForest::train(float**trainset,float*labels,int SampleNum,int featureN
 	_sampleIndex=NULL;
 }
 
-void RandomForest::predict(float*data,float&response)
+void
+RandomForest::predict(
+		const vector <float> &data,
+		float &response)
 {
 	//get the predict from every tree
 	//if regression,_classNum=1
@@ -124,11 +137,8 @@ void RandomForest::predict(float*data,float&response)
 	{result[i]=0;}
 	for(i=0;i<_treeNum;++i)//_treeNum
 	{
-		Result r;
-		r.label=0;
-		r.prob=0;//Result 
-		r=_forest[i]->predict(data);
-		result[static_cast<int>(r.label)]+=r.prob;
+		Result r = _forest[i]->predict(data);
+		result[static_cast<int>(r.label)] += r.prob;
 	}
 	if(_isRegression)
 	{response=result[0]/_treeNum;}
@@ -149,10 +159,13 @@ void RandomForest::predict(float*data,float&response)
 	delete[] result;
 }
 
-void RandomForest::predict(float**testset,int SampleNum,float*responses)
+void
+RandomForest::predict(
+		const vector < vector <float> > &testset,
+		vector <float> &responses)
 {
 	//get the predict from every tree
-	for(int i=0;i<SampleNum;++i)
+	for(int i=0;i<testset.size();++i)
 	{
 		predict(testset[i],responses[i]);
 	}

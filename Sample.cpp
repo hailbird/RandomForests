@@ -1,41 +1,47 @@
 #include"Sample.h"
 
-Sample::Sample(float**dataset,float*labels,int classNum,int sampleNum,int featureNum)
+Sample::Sample(
+	const vector < vector <float> > &dataset,
+	const vector <float> &labels,
+	int classNum,
+	int sampleNum,
+	int featureNum)
+	: _dataset(dataset),
+	  _labels(labels),
+	  _sampleNum(sampleNum),
+	  _featureNum(featureNum),
+	  _classNum(classNum),
+	  _selectedSampleNum(sampleNum),
+	  _selectedFeatureNum(featureNum),
+	  _sampleIndex(NULL),
+	  _featureIndex(NULL)
 {
-	_dataset=dataset;
-	_labels=labels;
-	_sampleNum=sampleNum;
-	_featureNum=featureNum;
-	_classNum=classNum;
-	_selectedSampleNum=sampleNum;
-	_selectedFeatureNum=featureNum;
-	_sampleIndex=NULL;
-	_featureIndex=NULL;
 }
 
 Sample::Sample(Sample* samples)
+	: _dataset(samples->_dataset),
+	  _labels(samples->_labels),
+	  _classNum(samples->getClassNum()),
+	  _featureNum(samples->getFeatureNum()),
+	  _sampleNum(samples->getSampleNum()),
+	  _selectedSampleNum(samples->getSelectedSampleNum()),
+	  _selectedFeatureNum(samples->getSelectedFeatureNum()),
+	  _sampleIndex(samples->getSampleIndex()),
+	  _featureIndex(samples->getFeatureIndex())
 {
-	_dataset=samples->_dataset;
-	_labels=samples->_labels;
-	_classNum=samples->getClassNum();
-	_featureNum=samples->getFeatureNum();
-	_sampleNum=samples->getSampleNum();
-	_selectedSampleNum=samples->getSelectedSampleNum();
-	_selectedFeatureNum=samples->getSelectedFeatureNum();
-	_sampleIndex=samples->getSampleIndex();
-	_featureIndex=samples->getFeatureIndex();
 }
 
 Sample::Sample(Sample* samples,int start,int end)
+	: _dataset(samples->_dataset),
+	  _labels(samples->_labels),
+	  _classNum(samples->getClassNum()),
+	  _featureNum(samples->getFeatureNum()),
+	  _sampleNum(samples->getSampleNum()),
+	  _selectedSampleNum(end-start+1),
+	  _selectedFeatureNum(samples->getSelectedFeatureNum()),
+	  _featureIndex(NULL)
 {
-	_dataset=samples->_dataset;
-	_labels=samples->_labels;
-	_classNum=samples->getClassNum();
-	_sampleNum=samples->getSampleNum();
-	_selectedSampleNum=end-start+1;
-	_featureNum=samples->getFeatureNum();
-	_selectedFeatureNum=samples->getSelectedFeatureNum();
-	_sampleIndex=new int[_selectedSampleNum];
+	_sampleIndex = new int[_selectedSampleNum];
 	memcpy(_sampleIndex,samples->getSampleIndex()+start,sizeof(float)*_selectedSampleNum);
 }
 
@@ -84,11 +90,11 @@ void Sample::randomSelectFeature(int*featureIndex,int featureNum,int selectedFea
 		}
 		if(flag)
 		{
-			_featureIndex[i]=j;	
+			_featureIndex[i]=j;
 		}
 		else
 		{
-			_featureIndex[i]=index;	
+			_featureIndex[i]=index;
 		}
 	}
 }

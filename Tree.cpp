@@ -30,7 +30,7 @@ Tree::~Tree()
 	}
 }
 
-Result Tree::predict(float*data)
+Result Tree::predict(const vector <float> &data)
 {
 	int position=0;
 	Node*head=_cartreeArray[position];
@@ -63,7 +63,7 @@ void ClasTree::train(Sample*sample)
 	for(int i=0;i<_nodeNum;++i)
 	{
 		int parentId=(i-1)/2;
-		//if current node's parent node is NULL,continue 
+		//if current node's parent node is NULL,continue
 		if(_cartreeArray[parentId]==NULL)
 		{continue;}
 		//if the current node's parent node is a leaf,continue
@@ -129,7 +129,7 @@ void RegrTree::train(Sample*sample)
 	for(int i=0;i<_nodeNum;++i)
 	{
 		int parentId=(i-1)/2;
-		//if current node's parent node is NULL,continue 
+		//if current node's parent node is NULL,continue
 		if(_cartreeArray[parentId]==NULL)
 		{continue;}
 		//if the current node's parent node is a leaf,continue

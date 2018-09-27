@@ -12,6 +12,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <vector>
+
+using namespace std;
 
 class Sample
 {
@@ -20,7 +23,12 @@ public:
 	static const int FEATURESELECTION=2;
 
 	//create a empty samples
-	Sample(float**dataset,float*labels,int classNum,int sampleNum,int featureNum);
+	Sample(
+			const vector < vector <float> > &dataset,
+			const vector <float> &labels,
+			int classNum,
+			int sampleNum,
+			int featureNum);
 	//copy infomation from samples
 	Sample(Sample* samples);
 	//copy a part[start,end] from samples
@@ -30,7 +38,7 @@ public:
 	void randomSelectSample(int*sampleIndex,int SampleNum,int selectedSampleNum);
 	//random select features without replacement
 	void randomSelectFeature(int*featureIndex,int featureNum,int selectedFeatureNum);
-	
+
 	inline int getClassNum(){return _classNum;};
 
 	inline int getSampleNum(){return _sampleNum;};
@@ -52,9 +60,9 @@ public:
 	};
 
 
-	float**_dataset; //pointer to the input dataset
-	float*_labels;  //pointer to the input labels
-	
+	const vector < vector <float> > &_dataset; //pointer to the input dataset
+	const vector <float> &_labels;  //pointer to the input labels
+
 private:
 	int*_sampleIndex;  //all sample index
 	int*_featureIndex; //all feature index

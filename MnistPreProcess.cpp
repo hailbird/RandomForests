@@ -1,33 +1,64 @@
+#include <arpa/inet.h>
+#include <assert.h>
+#include <vector>
 #include"MnistPreProcess.h"
 
-void readData(float** dataset,float*labels,const char* dataPath,const char*labelPath)
+using namespace std;
+
+
+static int
+_read_int(FILE *fp)
 {
+	int	tmp;
+
+	assert(fread(&tmp, sizeof(tmp), 1, fp) == 1);
+	return ntohl(tmp);
+}
+
+
+void readData(
+		vector< vector< float > > &dataset,
+		vector< float > &labels,
+		int &n_classes,
+		const char *dataPath,
+		const char *labelPath)
+{
+	unsigned char element;
 	FILE* dataFile=fopen(dataPath,"rb");
-	FILE* labelFile=fopen(labelPath,"rb");
-	int mbs=0,number=0,col=0,row=0;
-	fread(&mbs,4,1,dataFile);
-	fread(&number,4,1,dataFile);
-	fread(&row,4,1,dataFile);
-	fread(&col,4,1,dataFile);
-	revertInt(mbs);
-	revertInt(number);
-	revertInt(row);
-	revertInt(col);
-	fread(&mbs,4,1,labelFile);
-	fread(&number,4,1,labelFile);
-	revertInt(mbs);
-	revertInt(number);
-	unsigned char temp;
-	for(int i=0;i<number;++i)
+	int mbs = _read_int(dataFile);
+	assert(mbs == 0x0803);
+	int number = _read_int(dataFile);
+	int row = _read_int(dataFile);
+	int col = _read_int(dataFile);
+
+	dataset.resize(number);
+	for (int i = 0;  i < number;  i++)
 	{
-		for(int j=0;j<row*col;++j)
+		dataset[i].resize(row * col);
+		for (int j = 0;  j < row * col;  j++)
 		{
-			fread(&temp,1,1,dataFile);
-			dataset[i][j]=static_cast<float>(temp);
+			fread(&element, sizeof(element), 1, dataFile);
+			dataset[i][j] = static_cast<float>(element);
 		}
-		fread(&temp,1,1,labelFile);
-		labels[i]=static_cast<float>(temp);
 	}
 	fclose(dataFile);
+
+	FILE* labelFile=fopen(labelPath,"rb");
+	bool should_count = (n_classes == 0);
+	mbs = _read_int(labelFile);
+	assert(mbs == 0x801);
+	assert(_read_int(labelFile) == number);
+	labels.resize(number);
+	for (int i = 0;  i < number;  i++)
+	{
+		fread(&element, sizeof(element), 1, labelFile);
+		if (should_count)
+		{
+			n_classes = max(n_classes, (int) element + 1);
+		} else {
+			assert((int)element < n_classes);
+		}
+		labels[i] = static_cast<float>(element);
+	}
 	fclose(labelFile);
 };

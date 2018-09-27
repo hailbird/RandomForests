@@ -43,7 +43,7 @@ public:
 	//create a leaf node
 	virtual void createLeaf()=0;
 	//predict the data
-	virtual int predict(float*data,int id)=0;
+	virtual int predict(const vector <float> &data,int id)=0;
 	virtual void getResult(Result&r)=0;
 
 	inline int getFeatureIndex(){return _featureIndex;};
@@ -64,7 +64,7 @@ public:
 	void calculateInfoGain(Node**_cartreeArray,int id,float minInfoGain);
 	void calculateParams();
 	void createLeaf();
-	int predict(float*data,int id);
+	int predict(const vector <float> &data,int id);
 	void getResult(Result&r);
 
 	inline float getClass(){return _class;};
@@ -87,15 +87,15 @@ public:
 	~RegrNode();
 	void calculateInfoGain(Node**_cartreeArray,int id,float minInfoGain);
 	void calculateParams();
-	void createLeaf(); 
-	int predict(float*data,int id);
+	void createLeaf();
+	int predict(const vector <float> &data,int id);
 	void getResult(Result&r);
 
 	inline float getValue(){return _value;};
 	inline void setValue(float value){_value=value;};
 	//parameters for training
-	float _mean;  
-	float _variance; 
+	float _mean;
+	float _variance;
 private:
 	float _value; //the regression value
 };

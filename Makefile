@@ -7,10 +7,10 @@ LIBRARY_DIRS := /usr/local/lib
 LDFLAGS := $(foreach librarydir, $(LIBRARY_DIRS),-L$(librarydir)) $(PKG_CONFIG) \
 $(foreach library,$(LIBRARIES),-l$(library))
 COMMON_FLAGS := $(foreach includedir, $(INCLUDE_DIRS), -I$(includedir))
-CXXFLAGS := -g $(COMMON_FLAGS)
+CXXFLAGS := -O2 -g $(COMMON_FLAGS)
 
 RandomForests : $(objects)
-	g++ -o RandomForests $(objects) $(CXXFLAGS) $(LDFLAGS)
+	g++ -O2 -g -o RandomForests $(objects) $(CXXFLAGS) $(LDFLAGS)
 
 .PHONY : clean
 clean :
