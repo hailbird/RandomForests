@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <assert.h>
+#include <math.h>
 #include <vector>
 #include"MnistPreProcess.h"
 
@@ -70,3 +71,47 @@ void readData(
 	}
 	fclose(labelFile);
 };
+
+
+static float
+calculate_weight(
+	const vector < vector <float> > &trainset,
+	int feature)
+{
+	double sum = 0, sum2 = 0;
+	int n_samples = trainset.size();
+
+	for (int i = 0;  i < n_samples;  i++)
+	{
+		const float &v = trainset[i][feature];
+		sum += v;
+		sum2 += v * v;
+	}
+
+	return sum2 < 1e-5 ? 0 : sqrt(sum2 - sum * sum / n_samples);
+}
+
+
+void
+init_weight_map(
+	const vector < vector <float> > &trainset,
+	map <float, int> &weight_map)
+{
+	vector <float> weight;
+	int n_samples = trainset[0].size();
+
+	weight.resize(n_samples);
+	weight_map.clear();
+
+	for (int i = 0;  i < n_samples;  i++)
+	{
+		weight[i] = calculate_weight(trainset, i);
+	}
+
+	double total_weight = 0;
+	for (int i = 0;  i < n_samples;  i++)
+	{
+		total_weight += weight[i];
+		weight_map[total_weight] = i;
+	}
+}

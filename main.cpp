@@ -1,9 +1,9 @@
 #include <vector>
+#include <numeric>
 #include"RandomForest.h"
 #include"MnistPreProcess.h"
 
 using namespace std;
-#define NUMBER_OF_CLASSES 10
 
 int main(int argc, const char * argv[])
 {
@@ -12,17 +12,19 @@ int main(int argc, const char * argv[])
 	vector< vector<float> > testset;
 	vector< float > trainlabels;
 	vector< float > testlabels;
-	int	numberClasses = 0;
+	map< float, int > weight_map;
+	int	n_classes = 0;
 
-    readData(trainset, trainlabels, numberClasses, argv[1], argv[2]);
-    readData(testset, testlabels, numberClasses, argv[3], argv[4]);
+    readData(trainset, trainlabels, n_classes, argv[1], argv[2]);
+    readData(testset, testlabels, n_classes, argv[3], argv[4]);
+    init_weight_map(trainset, weight_map);
 
     //2. create RandomForest class and set some parameters
 	RandomForest randomForest(100,10,10,0);
 
 	//3. start to train RandomForest
 	//	 randomForest.train(trainset,trainlabels,TRAIN_NUM,FEATURE,10,true,56);//regression
-    randomForest.train(trainset, trainlabels, NUMBER_OF_CLASSES, false);//classification
+    randomForest.train(trainset, trainlabels, weight_map, n_classes, false);//classification
 
     //restore model from file and save model to file
 //	randomForest.saveModel("E:\\RandomForest2.Model");

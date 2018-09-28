@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
+#include <map>
 #include "Tree.h"
 #include "Sample.h"
 
@@ -43,11 +44,13 @@ public:
 	void train(
 			const vector < vector <float> > &trainset,
 			const vector <float> &labels,
+			const map <float, int> &weight_map,
 			int classNum,
 			bool isRegression);
 	void train(
 			const vector < vector <float> > &trainset,
 			const vector <float> &labels,
+			const map <float, int> &weight_map,
 			int classNum,
 			int trainFeatureNumPerNode,
 			bool isRegression);

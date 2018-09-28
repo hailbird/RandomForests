@@ -13,6 +13,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -26,6 +27,7 @@ public:
 	Sample(
 			const vector < vector <float> > &dataset,
 			const vector <float> &labels,
+			const map <float, int> &weight_map,
 			int classNum,
 			int sampleNum,
 			int featureNum);
@@ -62,6 +64,7 @@ public:
 
 	const vector < vector <float> > &_dataset; //pointer to the input dataset
 	const vector <float> &_labels;  //pointer to the input labels
+	const map <float, int> &_weight_map;
 
 private:
 	int*_sampleIndex;  //all sample index

@@ -49,18 +49,20 @@ void
 RandomForest::train(
 		const vector < vector <float> > &trainset,
 		const vector <float> &labels,
+		const map <float, int> &weight_map,
 		int classNum,
 		bool isRegression)
 {
 	int featureNum = trainset[0].size();
-	int trainFeatureNumPerNode = static_cast<int>(sqrt(static_cast<float>(featureNum) / 0.618));
-	train(trainset, labels, classNum, trainFeatureNumPerNode, isRegression);
+	int trainFeatureNumPerNode = static_cast<int>(sqrt(static_cast<float>(featureNum)));
+	train(trainset, labels, weight_map, classNum, trainFeatureNumPerNode, isRegression);
 }
 
 void
 RandomForest::train(
 		const vector < vector <float> > &trainset,
 		const vector <float> &labels,
+		const map <float, int> &weight_map,
 		int classNum,
 		int trainFeatureNumPerNode,
 		bool isRegression)
@@ -107,7 +109,7 @@ RandomForest::train(
 		}
 	}
 	//this object hold the whole trainset&labels
-	_trainSample = new Sample(trainset, labels, _classNum, _trainSampleNum, _featureNum);
+	_trainSample = new Sample(trainset, labels, weight_map, _classNum, _trainSampleNum, _featureNum);
 	srand(static_cast<unsigned int>(time(NULL)));
 	int*_sampleIndex=new int[_trainSampleNum];
 	//start to train every tree in the forest

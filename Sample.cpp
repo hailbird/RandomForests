@@ -6,11 +6,13 @@ using namespace std;
 Sample::Sample(
 	const vector < vector <float> > &dataset,
 	const vector <float> &labels,
+	const map <float, int> &weight_map,
 	int classNum,
 	int sampleNum,
 	int featureNum)
 	: _dataset(dataset),
 	  _labels(labels),
+	  _weight_map(weight_map),
 	  _sampleNum(sampleNum),
 	  _featureNum(featureNum),
 	  _classNum(classNum),
@@ -24,6 +26,7 @@ Sample::Sample(
 Sample::Sample(Sample* samples)
 	: _dataset(samples->_dataset),
 	  _labels(samples->_labels),
+	  _weight_map(samples->_weight_map),
 	  _classNum(samples->getClassNum()),
 	  _featureNum(samples->getFeatureNum()),
 	  _sampleNum(samples->getSampleNum()),
@@ -37,6 +40,7 @@ Sample::Sample(Sample* samples)
 Sample::Sample(Sample* samples,int start,int end)
 	: _dataset(samples->_dataset),
 	  _labels(samples->_labels),
+	  _weight_map(samples->_weight_map),
 	  _classNum(samples->getClassNum()),
 	  _featureNum(samples->getFeatureNum()),
 	  _sampleNum(samples->getSampleNum()),
@@ -68,6 +72,7 @@ void Sample::randomSelectSample(int*sampleIndex,int SampleNum,int selectedSample
 		_sampleIndex[i] = rand() % SampleNum;
 	}
 }
+
 void Sample::randomSelectFeature(int*featureIndex, int featureNum, int selectedFeatureNum)
 {
 	_featureNum=featureNum;
@@ -86,7 +91,7 @@ void Sample::randomSelectFeature(int*featureIndex, int featureNum, int selectedF
 		}
 		_featureIndex[i] = (k < i) ? j : index;
 	}
-#else
+#elif 0
     set <int> selected;
     static const int row = 28;
     static const int col = 28;
@@ -131,6 +136,21 @@ void Sample::randomSelectFeature(int*featureIndex, int featureNum, int selectedF
             _featureIndex[i] = rand() % featureNum;
         } while (selected.find(_featureIndex[i]) != selected.end());
         selected.insert(_featureIndex[i]);
+    }
+#else
+    set <int> selected;
+	double total_weight = _weight_map.rbegin()->first;
+    for (int i = 0;  i < selectedFeatureNum;  i++)
+    {
+    	int feature;
+        do
+        {
+        	// FIXME: may precision be the problem?
+        	float weight = (double) rand() / RAND_MAX * total_weight;
+        	feature = _weight_map.lower_bound(weight)->second;
+        } while (selected.find(feature) != selected.end());
+        _featureIndex[i] = feature;
+        selected.insert(feature);
     }
 #endif
 }
