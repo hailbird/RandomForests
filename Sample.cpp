@@ -1,4 +1,7 @@
+#include <set>
 #include"Sample.h"
+
+using namespace std;
 
 Sample::Sample(
 	const vector < vector <float> > &dataset,
@@ -58,43 +61,76 @@ void Sample::randomSelectSample(int*sampleIndex,int SampleNum,int selectedSample
 	if(_sampleIndex!=NULL)
 	{delete[] _sampleIndex;}
 	_sampleIndex=sampleIndex;
-	int i=0,index=0;
+
 	//sampling trainset with replacement
-	for(i=0;i<selectedSampleNum;++i)
+	for(int i = 0;  i < selectedSampleNum;  i++)
 	{
-		index=rand()%SampleNum;
-		_sampleIndex[i]=index;
+		_sampleIndex[i] = rand() % SampleNum;
 	}
 }
-void Sample::randomSelectFeature(int*featureIndex,int featureNum,int selectedFeatureNum)
+void Sample::randomSelectFeature(int*featureIndex, int featureNum, int selectedFeatureNum)
 {
 	_featureNum=featureNum;
 	_selectedFeatureNum=selectedFeatureNum;
 	_featureIndex=featureIndex;
-	int i=0,j=0,k=0,index=0;
+
 	//sampling feature without replacement
-	for(i=0,j=featureNum-selectedFeatureNum;j<featureNum;++j,++i)
+#if 0   // baoh: I think this method unfairly emphasizes the bottom line.
+	for (int i = 0, j = featureNum - selectedFeatureNum;  j < featureNum; j++, i++)
 	{
-        if(j == 0)
-            index = 0;
-        else
-            index = rand()%j;
-		bool flag=false;
-		for(k=0;k<i;++k)
+	    int k, index = (j == 0) ? 0 : rand() % j;
+		for(k = 0;  k < i;  k++)
 		{
 			if(_featureIndex[k]==index)
-			{
-				flag=true;
 				break;
-			}
 		}
-		if(flag)
-		{
-			_featureIndex[i]=j;
-		}
-		else
-		{
-			_featureIndex[i]=index;
-		}
+		_featureIndex[i] = (k < i) ? j : index;
 	}
+#else
+    set <int> selected;
+    static const int row = 28;
+    static const int col = 28;
+    int i, this_row, this_col;
+#if 1
+    for (i = 0;  i < selectedFeatureNum * (1 - 0.618);  i++)
+    {
+        do
+        {
+            do
+            {
+                this_row = 5 + rand() % 18;
+                this_col = 5 + rand() % 18;
+            }
+            while (this_row > 10 && this_row < 17 && this_col > 10 && this_col < 17);
+            _featureIndex[i] = row * this_row + this_col;
+        }
+        while (selected.find(_featureIndex[i]) != selected.end());
+        selected.insert(_featureIndex[i]);
+    }
+#else
+    for (i = 0;  i < selectedFeatureNum / 2;  i++)
+    {
+        do
+        {
+            do
+            {
+                this_row = 4 + rand() % 20;
+                this_col = 4 + rand() % 20;
+            }
+            while (this_row > 10 && this_row < 17 && this_col > 10 && this_col < 17);
+            _featureIndex[i] = row * this_row + this_col;
+        }
+        while (selected.find(_featureIndex[i]) != selected.end());
+        selected.insert(_featureIndex[i]);
+    }
+#endif
+    for (;  i < selectedFeatureNum;  i++)
+    {
+        do
+        {
+            _featureIndex[i] = rand() % featureNum;
+        } while (selected.find(_featureIndex[i]) != selected.end());
+        selected.insert(_featureIndex[i]);
+    }
+#endif
 }

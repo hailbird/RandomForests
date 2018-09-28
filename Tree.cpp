@@ -83,8 +83,7 @@ void ClasTree::train(Sample*sample)
 			_cartreeArray[i]->createLeaf();
 			continue;
 		}
-        _cartreeArray[i]->_samples->randomSelectFeature
-        (_featureIndex,sample->getFeatureNum(),_trainFeatureNumPerNode);
+        _cartreeArray[i]->_samples->randomSelectFeature(_featureIndex,sample->getFeatureNum(), _trainFeatureNumPerNode);
 		//else calculate the information gain
 		_cartreeArray[i]->calculateInfoGain(_cartreeArray,i,_minInfoGain);
 		_cartreeArray[i]->_samples->releaseSampleIndex();
@@ -149,8 +148,7 @@ void RegrTree::train(Sample*sample)
 			_cartreeArray[i]->createLeaf();
 			continue;
 		}
-		_cartreeArray[i]->_samples->randomSelectFeature
-		(_featureIndex,sample->getFeatureNum(),_trainFeatureNumPerNode);
+		_cartreeArray[i]->_samples->randomSelectFeature(_featureIndex, sample->getFeatureNum(), _trainFeatureNumPerNode);
 		//else calculate the information gain
 		_cartreeArray[i]->calculateInfoGain(_cartreeArray,i,_minInfoGain);
 		_cartreeArray[i]->_samples->releaseSampleIndex();

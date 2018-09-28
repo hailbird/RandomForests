@@ -17,7 +17,9 @@ void Node::sortIndex(int featureId)
 {
 	const vector < vector <float> > &data=_samples->_dataset;
 	int*sampleId=_samples->getSampleIndex();
-	Pair*pairs=new Pair[_samples->getSelectedSampleNum()];
+	static Pair*pairs=NULL;
+	if (pairs == NULL)
+	    pairs = new Pair[_samples->getSelectedSampleNum() * 2];
 	for(int i=0;i<_samples->getSelectedSampleNum();++i)
 	{
 		pairs[i].id=sampleId[i];
@@ -26,7 +28,7 @@ void Node::sortIndex(int featureId)
 	qsort(pairs,_samples->getSelectedSampleNum(),sizeof(Pair),compare_pair);
 	for(int i=0;i<_samples->getSelectedSampleNum();++i)
 	{sampleId[i]=pairs[i].id;}
-	delete[] pairs;
+	// delete[] pairs;
 }
 
 int compare_pair( const void* a, const void* b )
@@ -34,8 +36,8 @@ int compare_pair( const void* a, const void* b )
    Pair* arg1 = (Pair*) a;
    Pair* arg2 = (Pair*) b;
    if( arg1->feature < arg2->feature ) return -1;
-   else if( arg1->feature == arg2->feature ) return 0;
-   else return 1;
+   if( arg1->feature == arg2->feature ) return 0;
+   return 1;
 }
 /***************************************************************/
 //ClasNode

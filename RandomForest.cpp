@@ -53,7 +53,7 @@ RandomForest::train(
 		bool isRegression)
 {
 	int featureNum = trainset[0].size();
-	int trainFeatureNumPerNode = static_cast<int>(sqrt(static_cast<float>(featureNum)));
+	int trainFeatureNumPerNode = static_cast<int>(sqrt(static_cast<float>(featureNum) / 0.618));
 	train(trainset, labels, classNum, trainFeatureNumPerNode, isRegression);
 }
 

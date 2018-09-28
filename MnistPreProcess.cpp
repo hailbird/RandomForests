@@ -23,10 +23,9 @@ void readData(
 		const char *dataPath,
 		const char *labelPath)
 {
-	unsigned char element;
 	FILE* dataFile=fopen(dataPath,"rb");
 	int mbs = _read_int(dataFile);
-	assert(mbs == 0x0803);
+	assert(mbs == 0x0803 || mbs == 0xfe03);
 	int number = _read_int(dataFile);
 	int row = _read_int(dataFile);
 	int col = _read_int(dataFile);
@@ -37,8 +36,16 @@ void readData(
 		dataset[i].resize(row * col);
 		for (int j = 0;  j < row * col;  j++)
 		{
-			fread(&element, sizeof(element), 1, dataFile);
-			dataset[i][j] = static_cast<float>(element);
+		    if (mbs == 0x0803)
+		    {
+	            unsigned char byte_element;
+			    fread(&byte_element, sizeof(byte_element), 1, dataFile);
+			    dataset[i][j] = static_cast<float>(byte_element);
+			} else {
+	            float   float_element;
+			    fread(&float_element, sizeof(float_element), 1, dataFile);
+			    dataset[i][j] = static_cast<float>(float_element);
+			}
 		}
 	}
 	fclose(dataFile);
@@ -51,14 +58,15 @@ void readData(
 	labels.resize(number);
 	for (int i = 0;  i < number;  i++)
 	{
-		fread(&element, sizeof(element), 1, labelFile);
+	    unsigned char class_id;
+		fread(&class_id, sizeof(class_id), 1, labelFile);
 		if (should_count)
 		{
-			n_classes = max(n_classes, (int) element + 1);
+			n_classes = max(n_classes, (int) class_id + 1);
 		} else {
-			assert((int)element < n_classes);
+			assert((int)class_id < n_classes);
 		}
-		labels[i] = static_cast<float>(element);
+		labels[i] = static_cast<float>(class_id);
 	}
 	fclose(labelFile);
 };
