@@ -24,8 +24,6 @@ struct Pair
 	int id;
 };
 
-int compare_pair( const void* a, const void* b );
-
 class Node
 {
 public:
