@@ -88,7 +88,8 @@ calculate_weight(
 		sum2 += v * v;
 	}
 
-	return sum2 < 1e-5 ? 0 : sqrt(sum2 - sum * sum / n_samples);
+	double d = sum2 - sum * sum / n_samples;
+	return d < 1e-5 ? 0 : pow(d, 0.3);
 }
 
 
@@ -111,7 +112,10 @@ init_weight_map(
 	double total_weight = 0;
 	for (int i = 0;  i < n_samples;  i++)
 	{
-		total_weight += weight[i];
-		weight_map[total_weight] = i;
+		if (weight[i] != 0.0)
+		{
+			total_weight += weight[i];
+			weight_map[total_weight] = i;
+		}
 	}
 }
